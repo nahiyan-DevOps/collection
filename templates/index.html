@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Redirect Buttons</title>
+    <style>
+        body {
+            background-color: #000;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        h1 {
+            color: #fff;
+            text-align: center;
+            margin-top: 20px;
+            font-size: 28px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .button-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 40px;
+        }
+
+        form {
+            margin-bottom: 20px;
+        }
+
+        button {
+            background-color: #007bff;
+            border: none;
+            color: #fff;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 5px;
+            margin: 10px 0;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #00bfff;
+        }
+    </style>
+</head>
+<body>
+    <h1>Redirect Buttons</h1>
+    <div class="button-container">
+        <form action="{{ url_for('redirect_7000') }}" method="get">
+            <button type="submit">Posts</button>
+        </form>
+        <form action="{{ url_for('redirect_8000') }}" method="get">
+            <button type="submit">Musics</button>
+        </form>
+        <form action="{{ url_for('redirect_9000') }}" method="get">
+            <button type="submit">Documents</button>
+        </form>
+    </div>
+</body>
+</html>
