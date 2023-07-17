@@ -4,7 +4,7 @@ import random
 
 # Database connection details
 db_connection = {
-    "host": "192.168.0.204",
+    "host": "localhost",
     "port": 3306,
     "user": "scraper",
     "password": "123",
