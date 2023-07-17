@@ -5,7 +5,7 @@ from io import BytesIO
 
 # Database connection details
 db_connection = {
-    "host": "localhost",
+    "host": "192.168.56.20",
     "port": 3306,
     "user": "scraper",
     "password": "123",
