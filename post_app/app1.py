@@ -5,7 +5,7 @@ from io import BytesIO
 
 # Database connection details
 db_connection = {
-    "host": "localhost",
+    "host": "192.168.0.204",
     "port": 3306,
     "user": "scraper",
     "password": "123",
@@ -27,7 +27,6 @@ def fetch_photos():
     conn.close()
     return photos
 
-# Function to insert a new photo into the database
 # Function to insert a new photo into the database
 def insert_photo(name, data):
     conn = get_db_connection()
