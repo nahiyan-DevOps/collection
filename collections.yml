@@ -31,7 +31,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: flask-service
+  name: flask-nodeport
   namespace: collections
 spec:
   selector:
@@ -40,6 +40,7 @@ spec:
     - protocol: TCP
       port: 80
       targetPort: 8080
+  type: NodePort
 ---
 # Deployment for post_app
 apiVersion: apps/v1
@@ -149,21 +150,3 @@ spec:
       port: 9000
       targetPort: 9000
 ---
-# Ingress for routing external traffic to the Flask app using the worker node's IP address
-apiVersion: networking.k8s.io/v1
-kind: Ingress
-metadata:
-  name: flask-ingress
-  namespace: collections
-spec:
-  rules:
-    - host: 192.168.56.30  # Replace with your Kubernetes worker node's IP address
-      http:
-        paths:
-          - path: /
-            pathType: Prefix
-            backend:
-              service:
-                name: flask-service
-                port:
-                  number: 80
