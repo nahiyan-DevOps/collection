@@ -1,0 +1,169 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: collections
+
+---
+
+# Deployment for the Flask app
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: flask-app
+  namespace: collections
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: flask-app
+  template:
+    metadata:
+      labels:
+        app: flask-app
+    spec:
+      containers:
+        - name: flask-app
+          image: nahiyan83bjit/collections:flask_app
+          ports:
+            - containerPort: 8080
+---
+# Service for the Flask app
+apiVersion: v1
+kind: Service
+metadata:
+  name: flask-service
+  namespace: collections
+spec:
+  selector:
+    app: flask-app
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8080
+---
+# Deployment for post_app
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: post-app
+  namespace: collections
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: post-app
+  template:
+    metadata:
+      labels:
+        app: post-app
+    spec:
+      containers:
+        - name: post-app
+          image: nahiyan83bjit/collections:post_app  # Replace with the actual image for post_app
+          ports:
+            - containerPort: 7000
+---
+# Service for post_app
+apiVersion: v1
+kind: Service
+metadata:
+  name: post-app
+  namespace: collections
+spec:
+  selector:
+    app: post-app
+  ports:
+    - protocol: TCP
+      port: 7000
+      targetPort: 7000
+---
+# Deployment for music_app
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: music-app
+  namespace: collections
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: music-app
+  template:
+    metadata:
+      labels:
+        app: music-app
+    spec:
+      containers:
+        - name: music-app
+          image: nahiyan83bjit/collections:music_app  # Replace with the actual image for music_app
+          ports:
+            - containerPort: 8000
+---
+# Service for music_app
+apiVersion: v1
+kind: Service
+metadata:
+  name: music-app
+  namespace: collections
+spec:
+  selector:
+    app: music-app
+  ports:
+    - protocol: TCP
+      port: 8000
+      targetPort: 8000
+---
+# Deployment for documents_app
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: documents-app
+  namespace: collections
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: documents-app
+  template:
+    metadata:
+      labels:
+        app: documents-app
+    spec:
+      containers:
+        - name: documents-app
+          image: nahiyan83bjit/collections:documents_app  # Replace with the actual image for documents_app
+          ports:
+            - containerPort: 9000
+---
+# Service for documents_app
+apiVersion: v1
+kind: Service
+metadata:
+  name: documents-app
+  namespace: collections
+spec:
+  selector:
+    app: documents-app
+  ports:
+    - protocol: TCP
+      port: 9000
+      targetPort: 9000
+---
+# Ingress for routing external traffic to the Flask app using the worker node's IP address
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: flask-ingress
+  namespace: collections
+spec:
+  rules:
+    - host: 192.168.56.30  # Replace with your Kubernetes worker node's IP address
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: flask-service
+                port:
+                  number: 80
