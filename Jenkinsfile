@@ -59,6 +59,7 @@ pipeline {
                     dockerRemoveImage(POST_IMAGE_NAME)
                     dockerRemoveImage(MUSIC_IMAGE_NAME)
                     dockerRemoveImage(DOCUMENTS_IMAGE_NAME)
+                    deleteDir()
                 }
             }
         }
@@ -67,7 +68,6 @@ pipeline {
     post {
         always {
             // Clean up or post-pipeline actions (e.g., notify team)
-            cleanup()
         }
     }
 }
@@ -100,5 +100,4 @@ def deployToKubernetes() {
 def cleanup() {
     // Perform any cleanup actions after the pipeline execution is complete
     // (e.g., delete temporary files or resources)
-    deleteDir()
 }
