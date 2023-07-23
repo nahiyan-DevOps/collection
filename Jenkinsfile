@@ -1,5 +1,7 @@
 pipeline {
-    agent any
+    agent {
+        label any
+    }
 
     environment {
         FLASK_IMAGE_NAME = "nahiyan83bjit/collections:flask_app"
@@ -10,7 +12,7 @@ pipeline {
     }
 
     stages {
-        stage('Git') {
+        stage('Checkout') {
             steps {
                 git branch: 'main', credentialsId: 'github-auth', url: 'https://github.com/nahiyan-DevOps/collection'
             }
@@ -19,10 +21,11 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 script {
-                    flaskImage = docker.build FLASK_IMAGE_NAME
-                    postImage = docker.build POST_IMAGE_NAME
-                    musicImage = docker.build MUSIC_IMAGE_NAME
-                    documentsImage = docker.build DOCUMENTS_IMAGE_NAME
+                    // Build Docker images
+                    dockerBuildImage(FLASK_IMAGE_NAME)
+                    dockerBuildImage(POST_IMAGE_NAME)
+                    dockerBuildImage(MUSIC_IMAGE_NAME)
+                    dockerBuildImage(DOCUMENTS_IMAGE_NAME)
                 }
             }
         }
@@ -30,26 +33,72 @@ pipeline {
         stage('Push to Docker Hub') {
             steps {
                 script {
-                    // Push the Docker image to Docker Hub
-                    docker.withRegistry('https://registry.hub.docker.com', 'docker-hub') {
-                        flaskImage.push()
-                        postImage.push()
-                        musicImage.push()
-                        documentsImage.push()
-                    }
+                    // Push Docker images to Docker Hub
+                    dockerPushImage(FLASK_IMAGE_NAME)
+                    dockerPushImage(POST_IMAGE_NAME)
+                    dockerPushImage(MUSIC_IMAGE_NAME)
+                    dockerPushImage(DOCUMENTS_IMAGE_NAME)
                 }
             }
         }
 
-        stage('Deploy stage') {
+        stage('Deploy to Kubernetes') {
             steps {
-                echo 'This is deploy stage'
                 script {
-                    kubeconfig(credentialsId: env.KUBE_CONFIG_ID, serverUrl: '192.168.56.20') {
-                        sh '/usr/bin/kubectl apply -f collections.yml'
-                    }
+                    // Deploy to Kubernetes
+                    deployToKubernetes()
+                }
+            }
+        }
+
+        stage('Cleanup') {
+            steps {
+                script {
+                    // Remove Docker images
+                    dockerRemoveImage(FLASK_IMAGE_NAME)
+                    dockerRemoveImage(POST_IMAGE_NAME)
+                    dockerRemoveImage(MUSIC_IMAGE_NAME)
+                    dockerRemoveImage(DOCUMENTS_IMAGE_NAME)
                 }
             }
         }
     }
+
+    post {
+        always {
+            // Clean up or post-pipeline actions (e.g., notify team)
+            cleanup()
+        }
+    }
+}
+
+// Custom functions for improved readability and reusability
+
+def dockerBuildImage(imageName) {
+    def image = docker.build imageName
+    // Custom steps for building the Docker image (if needed)
+}
+
+def dockerPushImage(imageName) {
+    docker.withRegistry('https://registry.hub.docker.com', 'docker-hub') {
+        def image = docker.image(imageName)
+        image.push()
+    }
+}
+
+def dockerRemoveImage(imageName) {
+    sh "docker rmi $imageName"
+}
+
+def deployToKubernetes() {
+    kubeconfig(credentialsId: env.KUBE_CONFIG_ID, serverUrl: '192.168.56.20') {
+        sh '/usr/bin/kubectl apply -f collections.yml'
+        // Custom deployment steps (e.g., check rollout status, handle errors)
+    }
+}
+
+def cleanup() {
+    // Perform any cleanup actions after the pipeline execution is complete
+    // (e.g., delete temporary files or resources)
+    deleteDir()
 }
