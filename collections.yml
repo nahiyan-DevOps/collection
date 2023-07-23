@@ -40,6 +40,7 @@ spec:
     - protocol: TCP
       port: 80
       targetPort: 8080
+      nodePort: 30080
   type: NodePort
 ---
 # Deployment for post_app
@@ -77,6 +78,8 @@ spec:
     - protocol: TCP
       port: 7000
       targetPort: 7000
+      nodePort: 30110
+  type: NodePort
 ---
 # Deployment for music_app
 apiVersion: apps/v1
@@ -113,6 +116,8 @@ spec:
     - protocol: TCP
       port: 8000
       targetPort: 8000
+      nodePort: 30120
+  type: NodePort
 ---
 # Deployment for documents_app
 apiVersion: apps/v1
@@ -149,4 +154,6 @@ spec:
     - protocol: TCP
       port: 9000
       targetPort: 9000
+      nodePort: 30130
+  type: NodePort
 ---
